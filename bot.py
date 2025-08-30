@@ -60,11 +60,11 @@ async def display_welcome_screen():
     now = datetime.now()
     print(f"{Colors.BRIGHT_GREEN}{Colors.BOLD}")
     print("  ╔══════════════════════════════════════╗")
-    print("  ║              B O T            ║")
+    print("  ║              B O T                   ║")
     print("  ║                                      ║")
     print(f"  ║     {Colors.YELLOW}{now.strftime('%H:%M:%S %d.%m.%Y')}{Colors.BRIGHT_GREEN}           ║")
     print("  ║                                      ║")
-    print("  ║     Bot TESTNET AUTOMATION         ║")
+    print("  ║     Bot TESTNET AUTOMATION           ║")
     print(f"  ║   {Colors.BRIGHT_WHITE}ZonaAirdrop{Colors.BRIGHT_GREEN}  |  t.me/ZonaAirdr0p   ║")
     print("  ╚══════════════════════════════════════╝")
     print(f"{Colors.RESET}")
@@ -351,13 +351,11 @@ class R2:
                 tx_hash = await self.send_raw_transaction_with_retries(account, web3, approve_tx)
                 receipt = await self.wait_for_receipt_with_retries(web3, tx_hash)
 
-                block_number = receipt.blockNumber
                 self.used_nonce[address] += 1
 
                 explorer = f"https://testnet.pharosscan.xyz/tx/{tx_hash}"
                 
                 logger.success("Approve Success")
-                logger.info(f"Block: {block_number}")
                 logger.info(f"Tx Hash: {tx_hash}")
                 logger.info(f"Explorer: {explorer}")
                 await self.print_timer()
@@ -399,13 +397,12 @@ class R2:
             tx_hash = await self.send_raw_transaction_with_retries(account, web3, mint_tx)
             receipt = await self.wait_for_receipt_with_retries(web3, tx_hash)
 
-            block_number = receipt.blockNumber
             self.used_nonce[address] += 1
 
-            return tx_hash, block_number
+            return tx_hash
         except Exception as e:
             logger.error(f"{str(e)}")
-            return None, None
+            return None
         
     async def perform_burn(self, account: str, address: str, use_proxy: bool):
         try:
@@ -434,13 +431,12 @@ class R2:
             tx_hash = await self.send_raw_transaction_with_retries(account, web3, burn_tx)
             receipt = await self.wait_for_receipt_with_retries(web3, tx_hash)
 
-            block_number = receipt.blockNumber
             self.used_nonce[address] += 1
 
-            return tx_hash, block_number
+            return tx_hash
         except Exception as e:
             logger.error(f"{str(e)}")
-            return None, None
+            return None
         
     async def perform_stake(self, account: str, address: str, use_proxy: bool):
         try:
@@ -475,13 +471,12 @@ class R2:
             tx_hash = await self.send_raw_transaction_with_retries(account, web3, stake_tx)
             receipt = await self.wait_for_receipt_with_retries(web3, tx_hash)
 
-            block_number = receipt.blockNumber
             self.used_nonce[address] += 1
 
-            return tx_hash, block_number
+            return tx_hash
         except Exception as e:
             logger.error(f"{str(e)}")
-            return None, None
+            return None
         
     async def print_timer(self):
         for remaining in range(random.randint(self.min_delay, self.max_delay), 0, -1):
@@ -493,6 +488,7 @@ class R2:
                 flush=True
             )
             await asyncio.sleep(1)
+        print(" " * 80, end="\r", flush=True)  # Clear the line
 
     def print_swap_count(self):
         while True:
@@ -701,33 +697,30 @@ class R2:
             return True
     
     async def process_perform_mint(self, account: str, address: str, use_proxy: bool):
-        tx_hash, block_number = await self.perform_mint(account, address, use_proxy)
-        if tx_hash and block_number:
+        tx_hash = await self.perform_mint(account, address, use_proxy)
+        if tx_hash:
             explorer = f"https://testnet.pharosscan.xyz/tx/{tx_hash}"
             logger.success("Mint Success")
-            logger.info(f"Block: {block_number}")
             logger.info(f"Tx Hash: {tx_hash}")
             logger.info(f"Explorer: {explorer}")
         else:
             logger.error("Perform On-Chain Failed")
     
     async def process_perform_burn(self, account: str, address: str, use_proxy: bool):
-        tx_hash, block_number = await self.perform_burn(account, address, use_proxy)
-        if tx_hash and block_number:
+        tx_hash = await self.perform_burn(account, address, use_proxy)
+        if tx_hash:
             explorer = f"https://testnet.pharosscan.xyz/tx/{tx_hash}"
             logger.success("Burn Success")
-            logger.info(f"Block: {block_number}")
             logger.info(f"Tx Hash: {tx_hash}")
             logger.info(f"Explorer: {explorer}")
         else:
             logger.error("Perform On-Chain Failed")
     
     async def process_perform_stake(self, account: str, address: str, use_proxy: bool):
-        tx_hash, block_number = await self.perform_stake(account, address, use_proxy)
-        if tx_hash and block_number:
+        tx_hash = await self.perform_stake(account, address, use_proxy)
+        if tx_hash:
             explorer = f"https://testnet.pharosscan.xyz/tx/{tx_hash}"
             logger.success("Stake Success")
-            logger.info(f"Block: {block_number}")
             logger.info(f"Tx Hash: {tx_hash}")
             logger.info(f"Explorer: {explorer}")
         else:
@@ -835,12 +828,11 @@ class R2:
                 if use_proxy:
                     await self.load_proxies()
                 
-                separator = "=" * 25
                 for account in accounts:
                     if account:
                         address = self.generate_address(account)
 
-                        logger.info(f"{separator}[ {self.mask_account(address)} ]{separator}")
+                        logger.info(f"Processing: {self.mask_account(address)}")
 
                         if not address:
                             logger.error("Invalid Private Key or Library Version Not Supported")
@@ -849,18 +841,19 @@ class R2:
                         await self.process_accounts(account, address, option, use_proxy, rotate_proxy)
                         await asyncio.sleep(3)
 
-                logger.info("="*72)
                 seconds = 24 * 60 * 60
                 while seconds > 0:
                     formatted_time = self.format_seconds(seconds)
                     timestamp = datetime.now().strftime("%H:%M:%S")
                     print(
                         f"{Colors.BRIGHT_BLACK}[{timestamp}]{Colors.RESET} "
-                        f"{Colors.CYAN}Wait for {formatted_time} ... All Accounts Have Been Processed.",
-                        end="\r"
+                        f"{Colors.CYAN}Next cycle in: {formatted_time}",
+                        end="\r",
+                        flush=True
                     )
                     await asyncio.sleep(1)
                     seconds -= 1
+                print(" " * 80, end="\r", flush=True)  # Clear the line
 
         except FileNotFoundError:
             logger.error("File 'accounts.txt' Not Found.")
