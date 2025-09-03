@@ -2,7 +2,7 @@ from web3 import Web3
 from web3.exceptions import TransactionNotFound
 from eth_account import Account
 from eth_utils import to_hex, to_bytes
-from curl_cffi import requests
+import requests  # Mengganti curl_cffi dengan requests biasa
 from fake_useragent import FakeUserAgent
 from datetime import datetime
 from colorama import *
@@ -576,7 +576,7 @@ class Spout:
         url = "https://api.ipify.org?format=json"
         try:
             proxies = {"http":proxy_url, "https":proxy_url} if proxy_url else None
-            response = await asyncio.to_thread(requests.get, url=url, proxies=proxies, timeout=30, impersonate="chrome")
+            response = await asyncio.to_thread(requests.get, url=url, proxies=proxies, timeout=30)
             response.raise_for_status()
             return True
         except Exception as e:
@@ -608,10 +608,10 @@ class Spout:
         for attempt in range(retries):
             proxies = {"http":proxy_url, "https":proxy_url} if proxy_url else None
             try:
-                response = await asyncio.to_thread(requests.post, url=url, headers=headers, data=data, proxies=proxies, timeout=60, impersonate="chrome")
+                response = await asyncio.to_thread(requests.post, url=url, headers=headers, data=data, proxies=proxies, timeout=60)
                 response.raise_for_status()
                 return response.json()
-            except (Exception, requests.RequestsError) as e:
+            except Exception as e:
                 if attempt < retries:
                     await asyncio.sleep(5)
                     continue
