@@ -8,10 +8,8 @@ from datetime import datetime
 from colorama import *
 import asyncio, random, json, re, os, pytz
 
-# Initialize colorama with autoreset
 init(autoreset=True)
 
-# === Terminal Color Setup ===
 class Colors:
     RESET = Style.RESET_ALL
     BOLD = Style.BRIGHT
@@ -61,7 +59,7 @@ async def display_welcome_screen():
     now = datetime.now()
     print(f"{Colors.BRIGHT_GREEN}{Colors.BOLD}")
     print("  ╔══════════════════════════════════════╗")
-    print("  ║              B O T            ║")
+    print("  ║           Pharos Bitverse B O T            ║")
     print("  ║                                      ║")
     print(f"  ║     {Colors.YELLOW}{now.strftime('%H:%M:%S %d.%m.%Y')}{Colors.BRIGHT_GREEN}           ║")
     print("  ║                                      ║")
