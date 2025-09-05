@@ -21,10 +21,12 @@ class Colors:
     CYAN = Fore.CYAN
     MAGENTA = Fore.MAGENTA
     WHITE = Fore.WHITE
+    BLUE = Fore.BLUE
     BRIGHT_GREEN = Fore.LIGHTGREEN_EX
     BRIGHT_MAGENTA = Fore.LIGHTMAGENTA_EX
     BRIGHT_WHITE = Fore.LIGHTWHITE_EX
     BRIGHT_BLACK = Fore.LIGHTBLACK_EX
+    BRIGHT_BLUE = Fore.LIGHTBLUE_EX
 
 class Logger:
     @staticmethod
