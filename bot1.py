@@ -2,7 +2,7 @@ from web3 import Web3
 from web3.exceptions import TransactionNotFound
 from eth_account import Account
 from eth_utils import to_hex, to_bytes
-import requests  # Mengganti curl_cffi dengan requests biasa
+import requests
 from fake_useragent import FakeUserAgent
 from datetime import datetime
 from colorama import *
@@ -10,11 +10,9 @@ import asyncio, random, json, os
 import dotenv
 from dotenv import load_dotenv
 
-# Initialize colorama and load environment variables
 init(autoreset=True)
 load_dotenv()
 
-# === Terminal Color Setup ===
 class Colors:
     RESET = Style.RESET_ALL
     BOLD = Style.BRIGHT
@@ -24,7 +22,7 @@ class Colors:
     CYAN = Fore.CYAN
     MAGENTA = Fore.MAGENTA
     WHITE = Fore.WHITE
-    BLUE = Fore.BLUE  # Ditambahkan
+    BLUE = Fore.BLUE
     BRIGHT_GREEN = Fore.LIGHTGREEN_EX
     BRIGHT_MAGENTA = Fore.LIGHTMAGENTA_EX
     BRIGHT_WHITE = Fore.LIGHTWHITE_EX
@@ -63,7 +61,7 @@ async def display_welcome_screen():
     now = datetime.now()
     print(f"{Colors.BRIGHT_GREEN}{Colors.BOLD}")
     print("  ╔══════════════════════════════════════╗")
-    print("  ║              B O T            ║")
+    print("  ║          Pharos Spout B O T            ║")
     print("  ║                                      ║")
     print(f"  ║     {Colors.YELLOW}{now.strftime('%H:%M:%S %d.%m.%Y')}{Colors.BRIGHT_GREEN}           ║")
     print("  ║                                      ║")
